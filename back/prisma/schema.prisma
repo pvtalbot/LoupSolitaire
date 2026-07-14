@@ -4,11 +4,12 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  adapter = "prisma-pg"
+  output = "../generated/client"
 }
 
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String
+  username  String   @unique
   createdAt DateTime @default(now())
 }
