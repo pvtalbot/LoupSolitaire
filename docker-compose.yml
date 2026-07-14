@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: loup_solitaire_db
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: loup_solitaire_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+  back:
+    container_name: loup_solitaire_back
+    build:
+      context: ./back
+      target: development
+    user: "node"
+    working_dir: /home/node/app
+    command: npm run dev
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+    volumes:
+      - ./back:/home/node/app
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://dev:password@postgres:5432/loup_solitaire_db
+    depends_on:
+      - postgres
+    develop:
+      watch:
+        - action: rebuild
+          path: ./back/package.json
+
+  front:
+    image: node:26
+    working_dir: /home/node/app
+    volumes:
+      - ./front:/home/node/app
+    ports:
+      - "5173:5173"
+    command: npm run dev -- --host
+    user: "node"
+
+volumes:
+  pgdata:
