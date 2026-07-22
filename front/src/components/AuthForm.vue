@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import type { User } from '../types/user';
 
 
 const emit = defineEmits<{
-    (e: "login-success", user: { id: number, username: string }, token: string): void;
+    'login-success': [user: User, token: string];
 }>();
 const username = ref("");
 const isRegisterMode = ref(false);
@@ -24,20 +25,18 @@ const onSubmit = async () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username: username.value })
-        })
+        });
 
         const data = await response.json();
 
         if (!response.ok) {
-            errorMessage.value = data.error || "Une erreur est servenue.";
-            return
+            errorMessage.value = data.error || "Une erreur est survenue.";
+            return;
         }
-
-        emit("login-success", data.user, data.token);
-        username.value = ""
+        emit('login-success', data.user, data.token);
     } catch (err) {
-        errorMessage.value = "Impossible de contacter le serveur."
-    }
+        errorMessage.value = "Impossible de contacter le serveur.";
+    };
 }
 </script>
 

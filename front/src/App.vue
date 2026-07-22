@@ -2,8 +2,10 @@
 import { onMounted, ref } from "vue";
 import DashboardView from "./views/DashboardView.vue";
 import LoggedOutView from "./views/LoggedOutView.vue";
+import type { User } from "./types/user.ts";
+import { useUserStore } from "./stores/userStore.ts";
 
-const currentUser = ref<{ id: number; username: string } | null>(null);
+const userStore = useUserStore();
 
 onMounted(() => {
   const savedToken = localStorage.getItem("token");
@@ -11,21 +13,12 @@ onMounted(() => {
 
   if (savedToken && savedUsername) {
     currentUser.value = {id: 0, username: savedUsername}
-
   }
 })
 
-const handleAuthSuccess = (user: {id: number; username: string }, token: string) => {
-  localStorage.setItem("token", token);
-  localStorage.setItem("username", user.username);
-  currentUser.value = user;
+const handleAuthSuccess = (user: User, token: string) => {
+  userStore.setAuth(user, token)
 }
-
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("username");
-  currentUser.value = null;
-};
 </script>
 
 <template>
@@ -35,9 +28,8 @@ const handleLogout = () => {
     </header>
 
     <DashboardView
-      v-if="currentUser"
-      :user="currentUser"
-      @logout="handleLogout"/>
+      v-if="userStore.isAuthenticated"
+      @logout="userStore.logout"/>
 
     <LoggedOutView
       v-else
@@ -48,7 +40,7 @@ const handleLogout = () => {
 
 <style scoped>
 .app-layout {
-  max-width: 400px;
+  max-width: 800px;
   margin: 40px auto;
   font-family: system-ui, -apple-system, sans-serif;
   text-align: center;
@@ -58,6 +50,7 @@ const handleLogout = () => {
 header h1 {
   font-size: 2rem;
   margin-bottom: 24px;
-  color: #f3f4f6;
+  color: #f59e0b;
+  margin: 0 24px;
 }
 </style>

@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import UserProfile from '../components/UserProfile.vue';
+import { useUserStore } from '../stores/userStore.ts';
 
-defineProps<{
-    user: {id: number; username: string };
-}>();
+const userStore = useUserStore()
 
 const emit = defineEmits<{
-    (e: 'logout'): VideoDecoder;
+    'logout': [];
 }>();
 </script>
 
 <template>
     <div class="dashboard-view">
-        <UserProfile :user="user" @logout="emit('logout')"/>
+        <UserProfile v-if="userStore.user" :user="userStore.user" @logout="emit('logout')"/>
 
         <div class="adventure-placeholder">
             <p>Livre 1</p>
