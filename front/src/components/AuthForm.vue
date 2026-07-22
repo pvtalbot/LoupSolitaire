@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { User } from '../types/user';
+import { apiFetch } from '../services/api';
 
 
 const emit = defineEmits<{
@@ -9,6 +10,11 @@ const emit = defineEmits<{
 const username = ref("");
 const isRegisterMode = ref(false);
 const errorMessage = ref("");
+
+const title = computed(() => isRegisterMode.value ? 'Inscription' : 'Connexion');
+const switchMessage = computed(() => isRegisterMode.value ? 'Déjà un compte ?' : 'Pas encore de héros ?');
+const ctaMessage = computed(() => isRegisterMode.value ? "S'inscrire" : "Se connecter");
+const reverseCTAMessage = computed(() => isRegisterMode.value ? "Se connecter" : "S'inscrire");
 
 const onSubmit = async () => {
     errorMessage.value = "";
@@ -21,18 +27,11 @@ const onSubmit = async () => {
     const route = isRegisterMode.value ? '/users' : '/login';
 
     try {
-        const response = await fetch(`http://localhost:3000${route}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: username.value })
+        const data = await apiFetch<{user: User; token: string}>(route, {
+            method: 'POST',
+            body: JSON.stringify({ username: username.value }),
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            errorMessage.value = data.error || "Une erreur est survenue.";
-            return;
-        }
         emit('login-success', data.user, data.token);
     } catch (err) {
         errorMessage.value = "Impossible de contacter le serveur.";
@@ -42,7 +41,7 @@ const onSubmit = async () => {
 
 <template>
     <div class="card">
-        <h2>{{  isRegisterMode ? 'Inscription' : 'Connexion' }}</h2>
+        <h2>{{ title }}</h2>
 
         <form @submit.prevent="onSubmit">
             <div class="form-group">
@@ -59,14 +58,14 @@ const onSubmit = async () => {
             <p v-if="errorMessage" class="error-msg">{{ errorMessage }}</p>
 
             <button type="submit" class="btn-primary">
-                {{ isRegisterMode ? "S'inscrire" : "Se connecter" }}
+                {{ ctaMessage }}
             </button>
         </form>
 
         <p class="switch-mode">
-            {{ isRegisterMode ? 'Déjà un compte ?' : 'Pas encore de héros ?' }}
+            {{ switchMessage }}
             <button class="btn-link" @click="isRegisterMode = !isRegisterMode; errorMessage = ''">
-             {{ isRegisterMode ? 'Se connecter' : "S'inscrire" }}
+             {{ reverseCTAMessage }}
             </button>
         </p>
     </div>

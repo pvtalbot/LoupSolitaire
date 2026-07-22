@@ -1,20 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
 import DashboardView from "./views/DashboardView.vue";
 import LoggedOutView from "./views/LoggedOutView.vue";
 import type { User } from "./types/user.ts";
 import { useUserStore } from "./stores/userStore.ts";
 
 const userStore = useUserStore();
-
-onMounted(() => {
-  const savedToken = localStorage.getItem("token");
-  const savedUsername = localStorage.getItem("username");
-
-  if (savedToken && savedUsername) {
-    currentUser.value = {id: 0, username: savedUsername}
-  }
-})
 
 const handleAuthSuccess = (user: User, token: string) => {
   userStore.setAuth(user, token)
