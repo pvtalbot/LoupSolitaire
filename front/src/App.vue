@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import UserProfile from "./components/UserProfile.vue";
-import AuthForm from "./components/AuthForm.vue";
+import DashboardView from "./views/DashboardView.vue";
+import LoggedOutView from "./views/LoggedOutView.vue";
 
 const currentUser = ref<{ id: number; username: string } | null>(null);
 
@@ -29,26 +29,35 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <main class="container">
-    <h1>Loup Solitaire</h1>
+  <main class="app-layout">
+    <header>
+      <h1>Loup Solitaire</h1>
+    </header>
 
-    <UserProfile
+    <DashboardView
       v-if="currentUser"
       :user="currentUser"
       @logout="handleLogout"/>
 
-    <AuthForm
+    <LoggedOutView
       v-else
-      @success="handleAuthSuccess"
+      @login-success="handleAuthSuccess"
     />
   </main>
 </template>
 
 <style scoped>
-.container {
+.app-layout {
   max-width: 400px;
-  margin: 60px auto;
+  margin: 40px auto;
   font-family: system-ui, -apple-system, sans-serif;
   text-align: center;
+  padding: 0 16px;
+}
+
+header h1 {
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: #f3f4f6;
 }
 </style>

@@ -26,7 +26,7 @@ export default async function userRoutes(fastify: FastifyInstance) {
 
         const token = Buffer.from(user.username).toString("base64");
 
-        return { token }
+        return { token, user }
 
     } catch (error) {
         fastify.log.error(error)

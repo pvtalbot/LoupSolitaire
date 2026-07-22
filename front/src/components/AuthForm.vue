@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 
 const emit = defineEmits<{
-    (e: "success", user: { id: number, username: string }, token: string): void;
+    (e: "login-success", user: { id: number, username: string }, token: string): void;
 }>();
 const username = ref("");
 const isRegisterMode = ref(false);
@@ -33,7 +33,7 @@ const onSubmit = async () => {
             return
         }
 
-        emit("success", data.user, data.token);
+        emit("login-success", data.user, data.token);
         username.value = ""
     } catch (err) {
         errorMessage.value = "Impossible de contacter le serveur."
