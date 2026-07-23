@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user', () => {
 
     // --- GETTERS ---
     const isAuthenticated = computed(() => !!token.value);
+    const username = computed(() => user.value?.username ?? 'Undefined');
 
     // --- ACTIONS ---
     function setAuth(newUser: User, newToken: string) {
@@ -44,6 +45,7 @@ export const useUserStore = defineStore('user', () => {
         user,
         token,
         isAuthenticated,
+        username,
         setAuth,
         logout,
         fetchCurrentUser,

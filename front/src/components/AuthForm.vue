@@ -2,11 +2,11 @@
 import { computed, ref } from 'vue';
 import type { User } from '../types/user';
 import { apiFetch } from '../services/api';
+import { useUserStore } from '../stores/userStore';
+import router from '../router';
 
+const userStore = useUserStore();
 
-const emit = defineEmits<{
-    'login-success': [user: User, token: string];
-}>();
 const username = ref("");
 const isRegisterMode = ref(false);
 const errorMessage = ref("");
@@ -32,7 +32,8 @@ const onSubmit = async () => {
             body: JSON.stringify({ username: username.value }),
         });
 
-        emit('login-success', data.user, data.token);
+        userStore.setAuth(data.user, data.token);
+        router.push({name: 'dashboard'})
     } catch (err) {
         errorMessage.value = "Impossible de contacter le serveur.";
     };

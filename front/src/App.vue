@@ -1,14 +1,4 @@
 <script setup lang="ts">
-import DashboardView from "./views/DashboardView.vue";
-import LoggedOutView from "./views/LoggedOutView.vue";
-import type { User } from "./types/user.ts";
-import { useUserStore } from "./stores/userStore.ts";
-
-const userStore = useUserStore();
-
-const handleAuthSuccess = (user: User, token: string) => {
-  userStore.setAuth(user, token)
-}
 </script>
 
 <template>
@@ -17,14 +7,8 @@ const handleAuthSuccess = (user: User, token: string) => {
       <h1>Loup Solitaire</h1>
     </header>
 
-    <DashboardView
-      v-if="userStore.isAuthenticated"
-      @logout="userStore.logout"/>
+    <router-view/>
 
-    <LoggedOutView
-      v-else
-      @login-success="handleAuthSuccess"
-    />
   </main>
 </template>
 

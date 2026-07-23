@@ -1,18 +1,24 @@
 <script setup lang="ts">
+import { useUserStore } from '../stores/userStore';
+import router from '../router';
+
+const userStore = useUserStore();
 defineProps<{
     user: {id: number; username: string};
 }>();
 
-const emit = defineEmits<{
-    (e: "logout"): void;
-}>();
+const onLogout = () => {
+    userStore.logout();
+    router.push({name: 'auth'})
+};
+
 </script>
 
 <template>
     <div class="card">
-        <h2>Bienvenue, {{ user.username }}</h2>
+        <h2>Bienvenue, {{ userStore.username }}</h2>
         <p>Prêt à commencer ton aventure dans le Sommerlund ?</p>
-        <button class="btn-secondary" @click="emit('logout')">Déconnexion</button>
+        <button class="btn-secondary" @click="onLogout">Déconnexion</button>
     </div>
 </template>
 
